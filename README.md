@@ -51,9 +51,7 @@ You have finished the following tasks today:
 - clean the car
 ```
 
-Implementation of CLI Task Manager from gophercises, including the bonus section.
-
-**[Gophercises](https://courses.calhoun.io/courses/cor_gophercises)**  by Jon Calhoun
+>Implementation of CLI Task Manager from **[Gophercises](https://courses.calhoun.io/courses/cor_gophercises)**  by Jon Calhoun, including the bonus section.
 
 <!--
 **Run Commands:**
