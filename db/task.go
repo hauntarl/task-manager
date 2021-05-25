@@ -13,8 +13,8 @@ var (
 )
 
 type Task struct {
-	key uint64
-	val string
+	Key uint64
+	Val string
 }
 
 func Init(path string) error {
@@ -45,7 +45,7 @@ func ReadTasks() (tasks []Task, err error) {
 		buc := tx.Bucket(bucket)
 		cur := buc.Cursor()
 		for k, v := cur.First(); k != nil; k, v = cur.Next() {
-			tasks = append(tasks, Task{key: btoi(k), val: string(v)})
+			tasks = append(tasks, Task{Key: btoi(k), Val: string(v)})
 		}
 		return nil
 	})
