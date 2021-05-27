@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// listCmd represents the list command
+// listCmd displays all the todos to the user
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Lists all of your tasks.",
@@ -21,6 +21,7 @@ var listCmd = &cobra.Command{
 			fmt.Println("You have no tasks to complete, why not take a vacation? ⛵")
 			return
 		}
+
 		fmt.Println("Your tasks...")
 		for i, task := range tasks {
 			fmt.Printf("%d. %s\n", i+1, task.Val)
@@ -28,6 +29,5 @@ var listCmd = &cobra.Command{
 	},
 }
 
-func init() {
-	rootCmd.AddCommand(listCmd)
-}
+// register list command at our root to create a new cmd-line flag
+func init() { rootCmd.AddCommand(listCmd) }

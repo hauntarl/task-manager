@@ -9,11 +9,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// doCmd represents the do command
+// doCmd marks a task as complete
 var doCmd = &cobra.Command{
 	Use:   "do",
 	Short: "Marks a task as completed.",
 	Run: func(_ *cobra.Command, args []string) {
+		// fetch tasks to retrieve internal ids associated with each one
 		tasks, err := db.ReadTasks()
 		if err != nil {
 			log.Fatal(err)
@@ -23,14 +24,14 @@ var doCmd = &cobra.Command{
 			return
 		}
 
-		ids := make(map[int]struct{}, len(tasks))
+		ids := make(map[int]struct{}, len(tasks)) // remove duplicate entries
 		for _, arg := range args {
 			if id, err := strconv.Atoi(arg); err != nil {
 				fmt.Printf("'%s' is not a valid ID\n", arg)
 			} else if id > len(tasks) || id < 1 {
 				fmt.Printf("id: '%d' out of bounds: '1-%d'\n", id, len(tasks))
 			} else {
-				ids[id-1] = struct{}{}
+				ids[id-1] = struct{}{} // convert to zero-based indexing
 			}
 		}
 
@@ -45,6 +46,5 @@ var doCmd = &cobra.Command{
 	},
 }
 
-func init() {
-	rootCmd.AddCommand(doCmd)
-}
+// register do command at our root to create a new cmd-line flag
+func init() { rootCmd.AddCommand(doCmd) }
