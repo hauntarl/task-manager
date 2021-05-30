@@ -16,10 +16,10 @@ func main() {
 	//
 	// If we do not generate a home directory path and simply pass the db name
 	// as path then the db is created at the same location as executable, then
-	// if we go on and move our executable, we lose all the data: after running
+	// if we go on and move our executable, we lose all the data; after running
 	// the script, the code will create another db at it's current location.
 	home, _ := homedir.Dir()
-	path := filepath.Join(home, "todos.db")
+	path := filepath.Join(home, "task-manager.db")
 
 	// initialize database
 	if err := db.Init(path); err != nil {
