@@ -8,8 +8,9 @@ import (
 )
 
 var (
-	db     *bolt.DB         // database pointer?
-	bucket = []byte("task") // where all the tasks go
+	db    *bolt.DB         // database pointer?
+	Btodo = []byte("todo") // where all the new tasks go
+	Bdone = []byte("done") // where all completed tasks go
 )
 
 // Task is a Go representation of key, value data for given todo
@@ -33,16 +34,20 @@ func Init(path string) error {
 	); err != nil {
 		return err
 	}
-	return db.Update(func(tx *bolt.Tx) error {
-		_, err := tx.CreateBucketIfNotExists(bucket)
-		return err
+	return db.Update(func(tx *bolt.Tx) (err error) {
+		_, err = tx.CreateBucketIfNotExists(Btodo)
+		if err != nil {
+			return
+		}
+		_, err = tx.CreateBucketIfNotExists(Bdone)
+		return
 	})
 }
 
 // AddTask creates a new unique id and inserts the task into database
 func AddTask(name string) (key uint64, err error) {
 	err = db.Update(func(tx *bolt.Tx) error {
-		b := tx.Bucket(bucket)
+		b := tx.Bucket(Btodo)
 		key, _ = b.NextSequence()
 		// another restriction with boltdb is that, it will only accepts values
 		// in the form of slice of bytes, hence we need to encode/decode key.
@@ -53,9 +58,9 @@ func AddTask(name string) (key uint64, err error) {
 
 // ReadTasks reads all the tasks from database and generated Go representation
 // for the same
-func ReadTasks() (tasks []Task, err error) {
+func ReadTasks(buc []byte) (tasks []Task, err error) {
 	err = db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket(bucket)
+		b := tx.Bucket(buc)
 		c := b.Cursor() // helps you iterate through each element in database
 		for k, v := c.First(); k != nil; k, v = c.Next() {
 			tasks = append(tasks, Task{Key: btoi(k), Val: string(v)})
@@ -68,8 +73,21 @@ func ReadTasks() (tasks []Task, err error) {
 // DeleteTask removes a task from database using given key
 func DeleteTask(key uint64) (err error) {
 	err = db.Update(func(tx *bolt.Tx) error {
-		b := tx.Bucket(bucket)
+		b := tx.Bucket(Btodo)
 		return b.Delete(itob(key))
+	})
+	return
+}
+
+func CompleteTask(t Task) (err error) {
+	err = DeleteTask(t.Key)
+	if err != nil {
+		return
+	}
+
+	err = db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket(Bdone)
+		return b.Put(itob(t.Key), []byte(t.Val))
 	})
 	return
 }

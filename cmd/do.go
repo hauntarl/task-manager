@@ -15,7 +15,7 @@ var doCmd = &cobra.Command{
 	Short: "Marks a task as completed.",
 	Run: func(_ *cobra.Command, args []string) {
 		// fetch tasks to retrieve internal ids associated with each one
-		tasks, err := db.ReadTasks()
+		tasks, err := db.ReadTasks(db.Btodo)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -24,21 +24,10 @@ var doCmd = &cobra.Command{
 			return
 		}
 
-		ids := make(map[int]struct{}, len(tasks)) // remove duplicate entries
-		for _, arg := range args {
-			if id, err := strconv.Atoi(arg); err != nil {
-				fmt.Printf("'%s' is not a valid ID\n", arg)
-			} else if id > len(tasks) || id < 1 {
-				fmt.Printf("id: '%d' out of bounds: '1-%d'\n", id, len(tasks))
-			} else {
-				ids[id-1] = struct{}{} // convert to zero-based indexing
-			}
-		}
-
-		for id := range ids {
+		for id := range parseIDs(args, len(tasks)) {
 			val := tasks[id].Val
-			if err := db.DeleteTask(tasks[id].Key); err != nil {
-				fmt.Printf("Failed to delete task: '%s'\n", val)
+			if err := db.CompleteTask(tasks[id]); err != nil {
+				fmt.Printf("Failed to mark the task as complete: '%s'\n", val)
 				continue
 			}
 			fmt.Printf("You have completed the '%s' task.\n", val)
@@ -48,3 +37,17 @@ var doCmd = &cobra.Command{
 
 // register do command at our root to create a new cmd-line flag
 func init() { rootCmd.AddCommand(doCmd) }
+
+func parseIDs(args []string, siz int) (ids map[int]struct{}) {
+	ids = make(map[int]struct{}, siz) // remove duplicate entries
+	for _, arg := range args {
+		if id, err := strconv.Atoi(arg); err != nil {
+			fmt.Printf("'%s' is not a valid ID\n", arg)
+		} else if id > siz || id < 1 {
+			fmt.Printf("id: '%d' out of bounds: '1-%d'\n", id, siz)
+		} else {
+			ids[id-1] = struct{}{} // convert to zero-based indexing
+		}
+	}
+	return
+}

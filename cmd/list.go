@@ -13,16 +13,16 @@ var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Lists all of your tasks.",
 	Run: func(_ *cobra.Command, args []string) {
-		tasks, err := db.ReadTasks()
+		tasks, err := db.ReadTasks(db.Btodo)
 		if err != nil {
 			log.Fatal(err)
 		}
 		if len(tasks) == 0 {
-			fmt.Println("You have no tasks to complete, why not take a vacation? ⛵")
+			fmt.Println("Nothing to see here, try adding some... 🙂")
 			return
 		}
 
-		fmt.Println("Your tasks...")
+		fmt.Println("Pending tasks...")
 		for i, task := range tasks {
 			fmt.Printf("%d. %s\n", i+1, task.Val)
 		}
