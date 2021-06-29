@@ -1,5 +1,7 @@
 # CLI Task Manager
 
+>Implementation of CLI Task Manager from **[Gophercises](https://courses.calhoun.io/courses/cor_gophercises)**  by Jon Calhoun, including the bonus section.
+
  Building a CLI tool that can be used to manage your TODOs in the terminal. The basic usage of the tool is going to look roughly like this:
 
  ``` terminal
@@ -51,8 +53,6 @@ You have finished the following tasks today:
 - clean the car
 ```
 
->Implementation of CLI Task Manager from **[Gophercises](https://courses.calhoun.io/courses/cor_gophercises)**  by Jon Calhoun, including the bonus section.
-
 **Run Commands:**
 
 - go install .
@@ -71,6 +71,7 @@ You have finished the following tasks today:
 - time - set timeout on wait period to get database instance
 - log - to simply log application generated errors
 - strconv - to convert strings to their integer counterpart
+- [github.com/mitchellh/go-homedir](github.com/mitchellh/go-homedir) - detect user's home directory
 - [github.com/boltdb/bolt](https://github.com/boltdb/bolt) - database for project
 - [github.com/spf13/cobra](https://github.com/spf13/cobra) - library for creating cli applications
 
